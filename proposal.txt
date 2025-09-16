@@ -1,0 +1,13 @@
+a) ODE: The driven and driven harmonic oscillator
+    d^2x/dt^2+gamma*dx/dt+(k/m)*x = (F_0/m)*cos(omega*t)
+    i) As F_0 --> 0 and gamma --> 0, energy should be conserved since we approach the undriven, undamped case
+    ii) For k/m = omega^2, energy should be strictly increasing after a while
+    
+b) Integral: Compute the gravitational field at a point along the z-axis (z>R) due to a shell of fixed mass M and uniform density at radius R, spanning 0 <= phi <= 2pi and 0 <= theta <= theta_max for various values of theta_max.
+    The integral of interest works out to be
+            I = int_0^theta_max dtheta/(R^2+z^2-2Rz\cos\theta)
+    and the field is
+            g = G*M*I/(1-cos theta_max)
+    i) g goes to GM/(z-R)^2 as theta_max goes to 0
+    ii) g goes to GM/z^2 as theta_max goes to pi
+    iii) g goes to 0 as z goes to infinity
