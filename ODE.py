@@ -22,3 +22,11 @@ def solve_ODE(integrator, x0, v0, xdot, vdot, dt, t0, t_max):
         v = v_new
 
     return x_list, v_list, t_list
+
+def Euler(x, v, xdot, vdot, t, dt):
+    """Advance one timestep using the explicit form of Euler's method."""
+
+    x_new = x + xdot(x, v, t) * dt
+    v_new = v + vdot(x, v, t) * dt
+
+    return x_new, v_new
