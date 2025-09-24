@@ -4,15 +4,10 @@ def solve_ODE(integrator, x0, v0, xdot, vdot, dt, t0, t_max):
     with initial values x0, v0,
     up to time t_max.
     """
-    x_list = [
-        x0,
-    ]
-    v_list = [
-        v0,
-    ]
-    t_list = [
-        t0,
-    ]
+
+    x_list = [x0]
+    v_list = [v0]
+    t_list = [t0]
 
     x = x0
     v = v0
@@ -27,5 +22,3 @@ def solve_ODE(integrator, x0, v0, xdot, vdot, dt, t0, t_max):
         v = v_new
 
     return x_list, v_list, t_list
-    
-
