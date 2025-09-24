@@ -1,0 +1,29 @@
+MODULE 1: Integral solvers
+    - Integral solvers take as parameters (function, lower bound, upper bound, # subdivisions)
+    - Return a single number, the integral of the function from the lower bound to the upper bound.
+    1) Riemann sum
+    2) Trapezoidal rule
+    3) Simpson's rule
+
+MODULE 2: ODE solvers
+    - ODE solvers take as parameters (x, v, t, Delta t)
+    - Return (x_new, v_new, t_new), the updated values after one time step
+    1) Explicit Euler's method
+    2) 4th order Runge-Kutta
+    3) Energy computation
+        a) Given values of (x, v, t), compute the total energy 1/2mv^2+1/2kx^2
+    
+MODULE 3: Main code
+    1) Integrals
+        a) Figure 1: Riemann sum, trapezoidal rule, Simpson's rule integrals as a function of theta_max, for fixed R = 1, z = 3R/2.
+            i) All on a single plot
+            ii) Plot 0<theta_max<pi
+            iii) Plot the points (0, GM/(z-R)^2) and (pi, GM/z^2)
+        b) Figure 2: Comparing my implementations of trapezoidal & Simpson's to SciPy
+            i) 4 plots total
+            ii) My trapezoidal & scipy integrals as a function of theta_max
+            iii) fractional difference between my trapezoidal and scipy implementations as a function of theta_max
+            iv) The same pair of plots for my Simpson's & scipy.
+        c) Figure 3: Does g go to 0 as z goes to infinity?
+            i) Single plot
+            ii) For Riemann, trapezoidal, Simpson's pick theta_max = pi/2, then plot integral as a function of z from 10R to 10^6R, on a semilogx plot
