@@ -23,10 +23,31 @@ def solve_ODE(integrator, x0, v0, xdot, vdot, dt, t0, t_max):
 
     return x_list, v_list, t_list
 
+
 def Euler(x, v, xdot, vdot, t, dt):
     """Advance one timestep using the explicit form of Euler's method."""
 
     x_new = x + xdot(x, v, t) * dt
     v_new = v + vdot(x, v, t) * dt
+
+    return x_new, v_new
+
+
+def RK4(x, v, xdot, vdot, t, dt):
+    """Advance one timestep using the 4th-order Runge-Kutta method.
+    See Equations 8.33a-e of Mark Newman, Computational Physics.
+    """
+
+    k1x = dt * xdot(x, v, t)
+    k1v = dt * vdot(x, v, t)
+    k2x = dt * xdot(x + k1x / 2, v + k1v / 2, t + dt / 2)
+    k2v = dt * vdot(x + k1x / 2, v + k1v / 2, t + dt / 2)
+    k3x = dt * xdot(x + k2x / 2, v + k2v / 2, t + dt / 2)
+    k3v = dt * vdot(x + k2x / 2, v + k2v / 2, t + dt / 2)
+    k4x = dt * xdot(x + k3x, v + k3v, t + dt)
+    k4v = dt * vdot(x + k3x, v + k3v, t + dt)
+
+    x_new = x + (k1x + 2 * k2x + 2 * k3x + k4x) / 6
+    v_new = v + (k1v + 2 * k2v + 2 * k3v + k4v) / 6
 
     return x_new, v_new
