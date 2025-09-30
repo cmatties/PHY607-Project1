@@ -66,12 +66,12 @@ def vdot(x, v, t, k=k_ODE, m=m_ODE, F0=F0_ODE, omega=omega_ODE, gamma=gamma_ODE)
 def vector_wrapper(t,y, k=k_ODE, m=m_ODE, F0=F0_ODE, omega=omega_ODE, gamma=gamma_ODE):
     x = y[0]
     v = y[1]
-    return(np.array([xdot(x,v,t), vdot(x,v,t)]))
+    return(np.array([xdot(x,v,t), vdot(x,v,t, k=k, F0=F0, omega=omega, gamma=gamma)]))
 
 # Compare solutions to scipy integrators and exact solution
-dt = 0.01
+dt = 0.001
 x0_comparison = 0
-v0_comparison = 5
+v0_comparison = 1
 tmax_comparison = 20
 xlist_Euler, vlist_Euler, tlist_Euler = myODE.solve(
     myODE.Euler, x0_comparison, v0_comparison, xdot, vdot, dt, 0, tmax_comparison
@@ -94,9 +94,46 @@ xlist_exact = np.array(xlist_exact)
 
 plt.plot(tlist_Euler, xlist_Euler, label = "Euler")
 plt.plot(tlist_RK4, xlist_RK4, label = "RK4")
-plt.plot(tlist_Euler, xlist_exact, label = "Exact")
 plt.plot(tlist_scipy, xlist_scipy, label="Scipy RK4")
+plt.plot(tlist_Euler, xlist_exact, label = "Exact", color="black", ls="--")
 plt.legend()
+plt.xlabel("Time")
+plt.ylabel("Position")
+plt.title(r"Comparing ODE Integration Schemes, $F_0=0.1$")
+plt.show()
+
+plt.clf()
+
+# Compare solutions to scipy integrators and exact solution for a different set of parameters
+
+dt = 0.001
+xlist_Euler, vlist_Euler, tlist_Euler = myODE.solve(
+    myODE.Euler, x0_comparison, v0_comparison, xdot, lambda a,b,c:vdot(a,b,c,F0=1), dt, 0, tmax_comparison
+)
+xlist_RK4, vlist_RK4, tlist_RK4 = myODE.solve(
+    myODE.RK4, x0_comparison, v0_comparison, xdot, lambda a,b,c:vdot(a,b,c,F0=1), dt, 0, tmax_comparison
+)
+
+xlist_exact = []
+for t in tlist_Euler:
+    xlist_exact.append(reference_ODE(t, x0_comparison, v0_comparison, 0, F0 = 1))
+
+scipy_solution = spInt.solve_ivp(lambda a,b: vector_wrapper(a,b,F0=1), (0,tmax_comparison), np.array([x0_comparison, v0_comparison]), max_step = dt)
+tlist_scipy = np.array(scipy_solution.t)
+xlist_scipy = np.array(scipy_solution.y[0,:])
+
+xlist_Euler = np.array(xlist_Euler)
+xlist_RK4 = np.array(xlist_RK4)
+xlist_exact = np.array(xlist_exact)
+
+plt.plot(tlist_Euler, xlist_Euler, label = "Euler")
+plt.plot(tlist_RK4, xlist_RK4, label = "RK4")
+plt.plot(tlist_scipy, xlist_scipy, label="Scipy RK4")
+plt.plot(tlist_Euler, xlist_exact, label = "Exact", color="black", ls="--")
+plt.legend()
+plt.xlabel("Time")
+plt.ylabel("Position")
+plt.title(r"Comparing ODE Integration Schemes, $F_0=1$")
 plt.show()
 
 plt.clf()
