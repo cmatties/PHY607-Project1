@@ -15,6 +15,8 @@ R_int = 1  # default integral sphere radius
 z_int = 2 * R_int  # default integral z coordinate
 m_int = 1  # Default integral mass
 
+G = 6.6743e-11  # Gravitational constant
+
 
 def xdot(x, v, t):
     return v
@@ -81,29 +83,31 @@ def reference_integral(theta_max, R=R_int, z=z_int):
     term2 = (R - z) / (z**2 * (R**2 + z**2 - 2 * R * z) ** 0.5)
     return term1 - term2
 
+
 # Compare integrals to the exact solution and scipy
 N_comparison = 200
-theta_max_list = np.linspace(0, np.pi, num = 25)
+theta_max_list = np.linspace(0, np.pi, num=100)
 my_riemann_list = []
 my_trapezoid_list = []
 my_simpson_list = []
 exact_list = []
 scipy_trapezoid_list = []
 scipy_simpson_list = []
+
 for theta_max in theta_max_list:
     my_riemann_list.append(myInt.Riemann(integrand, 0, theta_max, N_comparison))
     my_trapezoid_list.append(myInt.Trapezoidal(integrand, 0, theta_max, N_comparison))
     my_simpson_list.append(myInt.Simpson(integrand, 0, theta_max, N_comparison))
-    
-    theta_array = np.linspace(0, theta_max, num = N_comparison+1, endpoint = True)
-    dtheta = theta_max/N_comparison
-    
-    scipy_simpson_list.append(spInt.simpson(integrand(theta_array), dx = dtheta))
-    scipy_trapezoid_list.append(spInt.trapezoid(integrand(theta_array), dx = dtheta))
-    
+
+    theta_array = np.linspace(0, theta_max, num=N_comparison + 1, endpoint=True)
+    dtheta = theta_max / N_comparison
+
+    scipy_simpson_list.append(spInt.simpson(integrand(theta_array), dx=dtheta))
+    scipy_trapezoid_list.append(spInt.trapezoid(integrand(theta_array), dx=dtheta))
+
     exact_list.append(reference_integral(theta_max))
 
-# Convert the lists of results to array to make plotting easier
+# Convert the lists of results to arrays to make plotting easier
 my_riemann_array = np.array(my_riemann_list)
 my_trapezoid_array = np.array(my_trapezoid_list)
 my_simpson_array = np.array(my_simpson_list)
@@ -111,18 +115,41 @@ scipy_trapezoid_array = np.array(scipy_trapezoid_list)
 scipy_simpson_array = np.array(scipy_simpson_list)
 exact_array = np.array(exact_list)
 
-fig, ax = plt.subplots(3,1)
+fig, ax = plt.subplots(3, 1)
 fig.suptitle("Comparing Integrator Implementations and Exact Solutions")
 ax[0].set_title("Riemann Sum")
-ax[0].semilogy(theta_max_list, np.abs(my_riemann_array-exact_array)/exact_array, color="black", label="Exact")
+ax[0].semilogy(
+    theta_max_list,
+    np.abs(my_riemann_array - exact_array) / exact_array,
+    color="black",
+    label="Exact",
+)
 
 ax[1].set_title("Trapezoidal Rule")
-ax[1].semilogy(theta_max_list, np.abs(my_trapezoid_array-scipy_trapezoid_array)/scipy_trapezoid_array, label="SciPy")
-ax[1].semilogy(theta_max_list, np.abs(my_trapezoid_array-exact_array)/exact_array, color="black", label="Exact")
+ax[1].semilogy(
+    theta_max_list,
+    np.abs(my_trapezoid_array - scipy_trapezoid_array) / scipy_trapezoid_array,
+    label="SciPy",
+)
+ax[1].semilogy(
+    theta_max_list,
+    np.abs(my_trapezoid_array - exact_array) / exact_array,
+    color="black",
+    label="Exact",
+)
 
 ax[2].set_title("Simpson's Rule")
-ax[2].semilogy(theta_max_list, np.abs(my_simpson_array-scipy_simpson_array)/scipy_simpson_array, label="SciPy")
-ax[2].semilogy(theta_max_list, np.abs(my_simpson_array-exact_array)/exact_array, label="Exact", color="black")
+ax[2].semilogy(
+    theta_max_list,
+    np.abs(my_simpson_array - scipy_simpson_array) / scipy_simpson_array,
+    label="SciPy",
+)
+ax[2].semilogy(
+    theta_max_list,
+    np.abs(my_simpson_array - exact_array) / exact_array,
+    label="Exact",
+    color="black",
+)
 ax[2].set_xlabel(r"$\theta_{\mathrm{max}}$")
 
 ax[0].legend()
@@ -131,22 +158,24 @@ ax[2].legend()
 fig.tight_layout()
 plt.show()
 
-# Plot global truncation error for the integral
 plt.clf()
+
+
+# Plot global truncation error for the integral
 N_list = [1, 10, 20, 30, 40, 50, 75, 100, 125, 150, 200, 500]
 results_riemann = []
 results_trapezoid = []
 results_simpson = []
-theta_max_truncation = np.pi/2
+theta_max_truncation = np.pi / 2
 result_exact = reference_integral(theta_max_truncation)
 for N in N_list:
     result_riemann = myInt.Riemann(integrand, 0, theta_max_truncation, N)
     result_trapezoid = myInt.Trapezoidal(integrand, 0, theta_max_truncation, N)
     result_simpson = myInt.Simpson(integrand, 0, theta_max_truncation, N)
-    
-    results_riemann.append(np.abs(result_riemann-result_exact))
-    results_trapezoid.append(np.abs(result_trapezoid-result_exact))
-    results_simpson.append(np.abs(result_simpson-result_exact))
+
+    results_riemann.append(np.abs(result_riemann - result_exact))
+    results_trapezoid.append(np.abs(result_trapezoid - result_exact))
+    results_simpson.append(np.abs(result_simpson - result_exact))
 
 plt.loglog(N_list, results_riemann, label="Riemann")
 plt.loglog(N_list, results_trapezoid, label="Trapezoid")
@@ -155,4 +184,34 @@ plt.legend()
 plt.title("Global Truncation Error for Integration")
 plt.xlabel("Number of slices N")
 plt.ylabel("Error")
+plt.show()
+
+plt.clf()
+
+
+# Check integral behavior in the limits
+# theta_max --> 0, and z --> infinity
+my_Riemann_limit1 = -G * m_int / (1 - np.cos(theta_max_list)) * my_riemann_array
+my_trapezoid_limit1 = -G * m_int / (1 - np.cos(theta_max_list)) * my_trapezoid_array
+my_simpson_limit1 = -G * m_int / (1 - np.cos(theta_max_list)) * my_simpson_array
+plt.hlines(-G * m_int / (z_int - R_int) ** 2, -0.05, 0.5, ls="--", color="black")
+plt.plot(theta_max_list, my_Riemann_limit1, label="Riemann sum")
+plt.plot(theta_max_list, my_trapezoid_limit1, label="Trapezoidal Rule")
+plt.plot(theta_max_list, my_simpson_limit1, label="Simpson's Rule")
+plt.xlabel(r"$\theta_{\mathrm{max}}$")
+plt.ylabel("g")
+plt.xlim((-0.05, 0.3))
+plt.legend()
+plt.show()
+
+# theta_max --> pi
+plt.clf()
+plt.hlines(-G * m_int / z_int**2, np.pi - 0.3, np.pi + 0.05, ls="--", color="black")
+plt.plot(theta_max_list, my_Riemann_limit1, label="Riemann sum")
+plt.plot(theta_max_list, my_trapezoid_limit1, label="Trapezoidal Rule")
+plt.plot(theta_max_list, my_simpson_limit1, label="Simpson's Rule")
+plt.xlabel(r"$\theta_{\mathrm{max}}$")
+plt.ylabel("g")
+plt.xlim((np.pi - 0.3, np.pi + 0.05))
+plt.legend()
 plt.show()
