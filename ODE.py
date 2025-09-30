@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def solve(integrator, x0, v0, xdot, vdot, dt, t0, t_max):
     """Use the given integrator to solve the differential equation
     given by the functions xdot(x,v,t) and vdot(x,v,t),
