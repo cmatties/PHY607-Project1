@@ -80,3 +80,29 @@ def reference_integral(theta_max, R=R_int, z=z_int):
     )
     term2 = (R - z) / (z**2 * (R**2 + z**2 - 2 * R * z) ** 0.5)
     return term1 - term2
+
+
+# Plot global truncation error for the integral
+N_list = [1, 10, 20, 30, 40, 50, 70, 100, 120, 150, 200, 500]
+results_riemann = []
+results_trapezoid = []
+results_simpson = []
+theta_max_truncation = np.pi/2
+result_exact = reference_integral(theta_max_truncation)
+for N in N_list:
+    result_riemann = myInt.Riemann(integrand, 0, theta_max_truncation, N)
+    result_trapezoid = myInt.Trapezoidal(integrand, 0, theta_max_truncation, N)
+    result_simpson = myInt.Simpson(integrand, 0, theta_max_truncation, N)
+    
+    results_riemann.append(np.abs(result_riemann-result_exact))
+    results_trapezoid.append(np.abs(result_trapezoid-result_exact))
+    results_simpson.append(np.abs(result_simpson-result_exact))
+
+plt.plot(np.log(N_list), np.log(results_riemann), label="Riemann")
+plt.plot(np.log(N_list), np.log(results_trapezoid), label="Trapezoid")
+plt.plot(np.log(N_list), np.log(results_simpson), label="Simpson")
+plt.legend()
+plt.title("Global Truncation Error for Integration")
+plt.xlabel("Number of slices log(N)")
+plt.ylabel("log(Error)")
+plt.show()
