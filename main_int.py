@@ -9,6 +9,7 @@ m_int = 1  # Default integral mass
 
 G = 6.6743e-11  # Gravitational constant
 
+
 def integrand(theta, R=R_int, z=z_int):
     return (
         (z - R * np.cos(theta))
