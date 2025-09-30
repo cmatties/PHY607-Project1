@@ -55,7 +55,7 @@ def xdot(x, v, t):
 def vdot(x, v, t, k=k_ODE, m=m_ODE, F0=F0_ODE, omega=omega_ODE, gamma=gamma_ODE):
     return F0 / m * np.cos(omega * t) - (k / m) * x - gamma * v
     
-    
+
 #Plot global error
 error_list_Euler = []
 error_list_RK4 = []
